@@ -1,0 +1,26 @@
+package demo.rt.feign;
+
+import demo.rt.config.Bootstrap;
+import demo.rt.config.feign.FeignServiceConfig;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+
+/**
+ * 查询数量 使用
+ */
+@FeignClient(name = "CountService", url = Bootstrap.IN_USE, configuration = FeignServiceConfig.class)
+public interface CountService {
+
+    /**
+     * <a href="https://www.elastic.co/guide/en/elasticsearch/reference/7.9/search-count.html"></a>
+     * 只返回数量
+     */
+    @RequestMapping(value = "/{index}/_count", method = RequestMethod.POST, headers = {"content-type=application/json"})
+    String _count(@PathVariable(value = "index") String index,
+                  @RequestBody String body);
+
+}

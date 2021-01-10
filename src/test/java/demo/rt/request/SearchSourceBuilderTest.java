@@ -1,0 +1,37 @@
+package demo.rt.request;
+
+import demo.rt.feign.SearchService;
+import demo.rt.po.request.QueryBuilders;
+import demo.rt.po.request.SearchSourceBuilder;
+import demo.rt.po.request.aggs.VoidAggs;
+import demo.rt.po.request.dsl.term.TermQuery;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+import javax.annotation.Resource;
+import java.util.Arrays;
+
+@SpringBootTest
+@Slf4j
+public class SearchSourceBuilderTest {
+
+    @Resource
+    SearchService searchService;
+
+
+    /**
+     * 测试searchSourceBuilder 构造请求体
+     */
+    @Test
+    public void Test() {
+        SearchSourceBuilder<TermQuery, VoidAggs> searchSourceBuilder = new SearchSourceBuilder<>();
+        searchSourceBuilder.from(0)
+                .size(1)
+                .source(Arrays.asList("age", "address"))
+                .query(QueryBuilders.termQuery("age", "30"));
+        log.info("请求body:{}", searchSourceBuilder.getRequestBody());
+        String response = searchService._search("index_bulk", searchSourceBuilder);
+        log.info("response:{}", response);
+    }
+}

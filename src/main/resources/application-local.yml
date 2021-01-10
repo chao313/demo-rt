@@ -1,0 +1,4 @@
+spring:
+  redis:
+    host: 39.107.236.187
+    port: 7016
