@@ -8,8 +8,6 @@ import org.springframework.web.context.request.async.DeferredResult;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.schema.AlternateTypeRules;
-import springfox.documentation.schema.WildcardType;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
@@ -27,92 +25,110 @@ public class Swagger2Configuration {
     private TypeResolver typeResolver;
 
 
+//    @Bean
+//    public Docket ESCustomApi() {
+//        Docket docket = new Docket(DocumentationType.SWAGGER_2)
+//                .select()
+//                .apis(RequestHandlerSelectors
+//                        .basePackage("demo.rt.controller.custom"))
+//                .paths(PathSelectors.any())
+//                .build()
+//                .genericModelSubstitutes(DeferredResult.class)//异步http请求
+//                .forCodeGeneration(true)
+//                .pathMapping("/")
+//                .apiInfo(apiInfo())
+//                .useDefaultResponseMessages(false)
+//                .groupName("ESCustomApi");
+//
+//        docket.alternateTypeRules(AlternateTypeRules.newMapRule(String.class, WildcardType.class));
+////        docket.alternateTypeRules( //自定义规则，如果遇到DeferredResult，则把泛型类转成json
+////                newRule(typeResolver.resolve(LinkedHashMap.class,typeResolver
+////                        typeResolver.resolve(JsonNode.class, WildcardType.class)),
+////                        typeResolver.resolve(WildcardType.class)));
+//
+//
+////        docket.alternateTypeRules(//解决返回对象为Map>时，Swagger页面报错
+////                AlternateTypeRules.newRule(
+////                        typeResolver.resolve(Map.class, String.class, typeResolver.resolve(List.class, FuzzyRequest.FuzzyParam.class)),
+////                        typeResolver.resolve(Map.class, String.class, WildcardType.class), Ordered.HIGHEST_PRECEDENCE)
+////        );
+//        return docket;
+//
+//    }
+//
+//    @Bean
+//    public Docket ESOriginApi() {
+//        Docket docket = new Docket(DocumentationType.SWAGGER_2)
+//                .select()
+//                .apis(RequestHandlerSelectors
+//                        .basePackage("demo.rt.controller.origin"))
+//                .paths(PathSelectors.any())
+//                .build()
+//                .genericModelSubstitutes(DeferredResult.class)//异步http请求
+//                .forCodeGeneration(true)
+//                .pathMapping("/")
+//                .apiInfo(apiInfo())
+//                .useDefaultResponseMessages(false)
+//                .groupName("ESOriginApi");
+//
+//        docket.alternateTypeRules(AlternateTypeRules.newMapRule(String.class, WildcardType.class));
+////        docket.alternateTypeRules( //自定义规则，如果遇到DeferredResult，则把泛型类转成json
+////                newRule(typeResolver.resolve(LinkedHashMap.class,typeResolver
+////                        typeResolver.resolve(JsonNode.class, WildcardType.class)),
+////                        typeResolver.resolve(WildcardType.class)));
+//
+//
+////        docket.alternateTypeRules(//解决返回对象为Map>时，Swagger页面报错
+////                AlternateTypeRules.newRule(
+////                        typeResolver.resolve(Map.class, String.class, typeResolver.resolve(List.class, FuzzyRequest.FuzzyParam.class)),
+////                        typeResolver.resolve(Map.class, String.class, WildcardType.class), Ordered.HIGHEST_PRECEDENCE)
+////        );
+//        return docket;
+//
+//    }
+//
+//    @Bean
+//    public Docket OutPevcApi() {
+//        return new Docket(DocumentationType.SWAGGER_2)
+//                .select()
+//                .apis(RequestHandlerSelectors
+//                        .basePackage("demo.rt.out"))
+//                .paths(PathSelectors.any())
+//                .build()
+//                .genericModelSubstitutes(DeferredResult.class)//异步http请求
+//                .forCodeGeneration(true)
+//                .pathMapping("/")
+//                .apiInfo(apiInfo())
+//                .useDefaultResponseMessages(false)
+//                .groupName("Out")
+////                .produces(Sets.newHashSet("application/octet-stream"))
+//                ;
+//    }
+//
+//    @Bean
+//    public Docket RedisPevcApi() {
+//        return new Docket(DocumentationType.SWAGGER_2)
+//                .select()
+//                .apis(RequestHandlerSelectors
+//                        .basePackage("demo.rt.controller.helper"))
+//                .paths(PathSelectors.any())
+//                .build()
+//                .genericModelSubstitutes(DeferredResult.class)//异步http请求
+//                .forCodeGeneration(true)
+//                .pathMapping("/")
+//                .apiInfo(apiInfo())
+//                .useDefaultResponseMessages(false)
+//                .groupName("Helper")
+////                .produces(Sets.newHashSet("application/octet-stream"))
+//                ;
+//    }
+
     @Bean
-    public Docket ESCustomApi() {
-        Docket docket = new Docket(DocumentationType.SWAGGER_2)
-                .select()
-                .apis(RequestHandlerSelectors
-                        .basePackage("demo.rt.controller.custom"))
-                .paths(PathSelectors.any())
-                .build()
-                .genericModelSubstitutes(DeferredResult.class)//异步http请求
-                .forCodeGeneration(true)
-                .pathMapping("/")
-                .apiInfo(apiInfo())
-                .useDefaultResponseMessages(false)
-                .groupName("ESCustomApi");
-
-        docket.alternateTypeRules(AlternateTypeRules.newMapRule(String.class, WildcardType.class));
-//        docket.alternateTypeRules( //自定义规则，如果遇到DeferredResult，则把泛型类转成json
-//                newRule(typeResolver.resolve(LinkedHashMap.class,typeResolver
-//                        typeResolver.resolve(JsonNode.class, WildcardType.class)),
-//                        typeResolver.resolve(WildcardType.class)));
-
-
-//        docket.alternateTypeRules(//解决返回对象为Map>时，Swagger页面报错
-//                AlternateTypeRules.newRule(
-//                        typeResolver.resolve(Map.class, String.class, typeResolver.resolve(List.class, FuzzyRequest.FuzzyParam.class)),
-//                        typeResolver.resolve(Map.class, String.class, WildcardType.class), Ordered.HIGHEST_PRECEDENCE)
-//        );
-        return docket;
-
-    }
-
-    @Bean
-    public Docket ESOriginApi() {
-        Docket docket = new Docket(DocumentationType.SWAGGER_2)
-                .select()
-                .apis(RequestHandlerSelectors
-                        .basePackage("demo.rt.controller.origin"))
-                .paths(PathSelectors.any())
-                .build()
-                .genericModelSubstitutes(DeferredResult.class)//异步http请求
-                .forCodeGeneration(true)
-                .pathMapping("/")
-                .apiInfo(apiInfo())
-                .useDefaultResponseMessages(false)
-                .groupName("ESOriginApi");
-
-        docket.alternateTypeRules(AlternateTypeRules.newMapRule(String.class, WildcardType.class));
-//        docket.alternateTypeRules( //自定义规则，如果遇到DeferredResult，则把泛型类转成json
-//                newRule(typeResolver.resolve(LinkedHashMap.class,typeResolver
-//                        typeResolver.resolve(JsonNode.class, WildcardType.class)),
-//                        typeResolver.resolve(WildcardType.class)));
-
-
-//        docket.alternateTypeRules(//解决返回对象为Map>时，Swagger页面报错
-//                AlternateTypeRules.newRule(
-//                        typeResolver.resolve(Map.class, String.class, typeResolver.resolve(List.class, FuzzyRequest.FuzzyParam.class)),
-//                        typeResolver.resolve(Map.class, String.class, WildcardType.class), Ordered.HIGHEST_PRECEDENCE)
-//        );
-        return docket;
-
-    }
-
-    @Bean
-    public Docket OutPevcApi() {
+    public Docket RedisPevcApi2() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
                 .apis(RequestHandlerSelectors
-                        .basePackage("demo.rt.out"))
-                .paths(PathSelectors.any())
-                .build()
-                .genericModelSubstitutes(DeferredResult.class)//异步http请求
-                .forCodeGeneration(true)
-                .pathMapping("/")
-                .apiInfo(apiInfo())
-                .useDefaultResponseMessages(false)
-                .groupName("Out")
-//                .produces(Sets.newHashSet("application/octet-stream"))
-                ;
-    }
-
-    @Bean
-    public Docket RedisPevcApi() {
-        return new Docket(DocumentationType.SWAGGER_2)
-                .select()
-                .apis(RequestHandlerSelectors
-                        .basePackage("demo.rt.controller.helper"))
+                        .basePackage("demo.rt.controller.system"))
                 .paths(PathSelectors.any())
                 .build()
                 .genericModelSubstitutes(DeferredResult.class)//异步http请求

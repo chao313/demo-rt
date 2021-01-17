@@ -26,23 +26,29 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.elasticsearch</groupId>
-            <artifactId>elasticsearch</artifactId>
-            <version>7.6.1</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.elasticsearch</groupId>-->
+            <!--<artifactId>elasticsearch</artifactId>-->
+            <!--<version>7.6.1</version>-->
+        <!--</dependency>-->
 
-        <dependency>
-            <groupId>org.elasticsearch.client</groupId>
-            <artifactId>elasticsearch-rest-high-level-client</artifactId>
-            <version>7.6.1</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.elasticsearch.client</groupId>-->
+            <!--<artifactId>elasticsearch-rest-high-level-client</artifactId>-->
+            <!--<version>7.6.1</version>-->
+            <!--<exclusions>-->
+                <!--<exclusion>-->
+                    <!--<artifactId>elasticsearch-rest-client</artifactId>-->
+                    <!--<groupId>org.elasticsearch.client</groupId>-->
+                <!--</exclusion>-->
+            <!--</exclusions>-->
+        <!--</dependency>-->
 
-        <dependency>
-            <groupId>org.elasticsearch.client</groupId>
-            <artifactId>transport</artifactId>
-            <version>7.6.1</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.elasticsearch.client</groupId>-->
+            <!--<artifactId>transport</artifactId>-->
+            <!--<version>7.6.1</version>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -201,6 +207,12 @@
             <version>3.2</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.fusesource</groupId>
+            <artifactId>sigar</artifactId>
+            <version>1.6.4</version>
+        </dependency>
+
         <!--<dependency>-->
             <!--<groupId>com.sun</groupId>-->
             <!--<artifactId>tools</artifactId>-->
@@ -278,10 +290,11 @@
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
                             <useUniqueVersions>false</useUniqueVersions>
-                            <mainClass>demo.elastic.search.DemoApplication</mainClass>
+                            <mainClass>demo.rt.DemoApplication</mainClass>
                         </manifest>
                         <manifestEntries>
                             <Class-Path>./</Class-Path>
+                            <Premain-Class>demo.agent.AgentMain</Premain-Class>
                         </manifestEntries>
                     </archive>
                     <excludes>

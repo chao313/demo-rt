@@ -24,7 +24,7 @@ public class KafkaProducerService {
     @Autowired
     private KafkaProperties kafkaProperties;
 
-    @PostConstruct
+//    @PostConstruct
     public void init() {
         kafkaProducer = new KafkaProducer<String, String>(kafkaProperties.getProduce());//创建生产者
     }
