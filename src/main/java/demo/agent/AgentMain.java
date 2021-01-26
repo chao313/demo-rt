@@ -8,6 +8,7 @@ import net.bytebuddy.dynamic.DynamicType;
 import net.bytebuddy.implementation.MethodDelegation;
 import net.bytebuddy.matcher.ElementMatchers;
 import net.bytebuddy.utility.JavaModule;
+import org.apache.commons.lang3.StringUtils;
 
 import java.lang.instrument.Instrumentation;
 
@@ -21,6 +22,9 @@ public class AgentMain {
      * @param inst
      */
     public static void premain(String args, Instrumentation inst) {
+        if (StringUtils.isBlank(args)) {
+            throw new RuntimeException("指定参数为空,程序退出");
+        }
         String packageName = args;
         buildAgent(inst, packageName);
     }
@@ -33,9 +37,7 @@ public class AgentMain {
         AgentBuilder.Transformer transformer = (builder, typeDescription,
                                                 classLoader, javaModule) -> {
             return builder
-                    .method(ElementMatchers.not(ElementMatchers.named("toString"))
-                            .and(ElementMatchers.not(ElementMatchers.named("hashCode")))
-                    ) // 拦截任意方法
+                    .method(ElementMatchers.any())// 拦截任意方法
                     .intercept(MethodDelegation.to(MonitorTrack.class));// 委托
         };
 
