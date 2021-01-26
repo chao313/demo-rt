@@ -1,6 +1,6 @@
 package demo.agent;
 
-import demo.agent.bytebuddy.MonitorDemo;
+import demo.agent.bytebuddy.MonitorTrack;
 import lombok.extern.slf4j.Slf4j;
 import net.bytebuddy.agent.builder.AgentBuilder;
 import net.bytebuddy.description.type.TypeDescription;
@@ -16,10 +16,13 @@ import java.lang.instrument.Instrumentation;
  */
 @Slf4j
 public class AgentMain {
+    /**
+     * @param args args[0]:packageName
+     * @param inst
+     */
     public static void premain(String args, Instrumentation inst) {
-//        System.out.println("hello java agent");
-//        inst.
-        buildAgent(inst, "demo");
+        String packageName = args;
+        buildAgent(inst, packageName);
     }
 
     /**
@@ -33,7 +36,7 @@ public class AgentMain {
                     .method(ElementMatchers.not(ElementMatchers.named("toString"))
                             .and(ElementMatchers.not(ElementMatchers.named("hashCode")))
                     ) // 拦截任意方法
-                    .intercept(MethodDelegation.to(MonitorDemo.class));// 委托
+                    .intercept(MethodDelegation.to(MonitorTrack.class));// 委托
         };
 
         AgentBuilder.Listener listener = new AgentBuilder.Listener() {

@@ -1,4 +1,4 @@
-package demo.agent.bytebuddy;
+package demo.agent.bytebuddy.tmp;
 
 import javassist.Modifier;
 import net.bytebuddy.ByteBuddy;
@@ -50,7 +50,7 @@ public class Hi {
      * <pre>
      * package bytebuddy.test.dynamicType;
      *
-     * import demo.agent.bytebuddy.Hi;
+     * import demo.agent.bytebuddy.tmp.Hi;
      *
      * public class className3 {
      *     public static void main(String[] args) {
@@ -88,7 +88,7 @@ public class Hi {
      * <pre>
      * package bytebuddy.test.dynamicType;
      *
-     * import demo.agent.bytebuddy.Hi;
+     * import demo.agent.bytebuddy.tmp.Hi;
      *
      * public class className3 {
      *     public static void main(String[] args) {

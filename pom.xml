@@ -14,41 +14,12 @@
     <name>demo</name>
     <description>Rt的使用demo</description>
 
-    <!--<properties>-->
-        <!--<java.version>1.8</java.version>-->
-        <!--<elasticsearch.version>7.6.1</elasticsearch.version>-->
-        <!--<JAVA_HOME>/Library/Java/JavaVirtualMachines/jdk1.8.0_144.jdk/Contents/Home</JAVA_HOME>-->
-    <!--</properties>-->
-
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
-        <!--<dependency>-->
-            <!--<groupId>org.elasticsearch</groupId>-->
-            <!--<artifactId>elasticsearch</artifactId>-->
-            <!--<version>7.6.1</version>-->
-        <!--</dependency>-->
-
-        <!--<dependency>-->
-            <!--<groupId>org.elasticsearch.client</groupId>-->
-            <!--<artifactId>elasticsearch-rest-high-level-client</artifactId>-->
-            <!--<version>7.6.1</version>-->
-            <!--<exclusions>-->
-                <!--<exclusion>-->
-                    <!--<artifactId>elasticsearch-rest-client</artifactId>-->
-                    <!--<groupId>org.elasticsearch.client</groupId>-->
-                <!--</exclusion>-->
-            <!--</exclusions>-->
-        <!--</dependency>-->
-
-        <!--<dependency>-->
-            <!--<groupId>org.elasticsearch.client</groupId>-->
-            <!--<artifactId>transport</artifactId>-->
-            <!--<version>7.6.1</version>-->
-        <!--</dependency>-->
 
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -81,13 +52,6 @@
             <version>2.2.2.RELEASE</version>
         </dependency>
 
-        <!--        &lt;!&ndash;feign rest风格&ndash;&gt;-->
-        <!--        &lt;!&ndash; https://mvnrepository.com/artifact/com.netflix.feign/feign-gson &ndash;&gt;-->
-        <!--        <dependency>-->
-        <!--            <groupId>com.netflix.feign</groupId>-->
-        <!--            <artifactId>feign-jaxrs</artifactId>-->
-        <!--            <version>8.18.0</version>-->
-        <!--        </dependency>-->
 
         <!-- Feign对JAXRS的支持 -->
         <dependency>
@@ -163,11 +127,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
         </dependency>
-        <!--        <dependency>-->
-        <!--            <groupId>junit</groupId>-->
-        <!--            <artifactId>junit</artifactId>-->
-        <!--        </dependency>-->
-
         <!--
         redis依赖
         需要在application加上
@@ -214,11 +173,11 @@
         </dependency>
 
         <!--<dependency>-->
-            <!--<groupId>com.sun</groupId>-->
-            <!--<artifactId>tools</artifactId>-->
-            <!--<version>1.8</version>-->
-            <!--<scope>system</scope>-->
-            <!--<systemPath>${JAVA_HOME}/lib/tools.jar</systemPath>-->
+        <!--<groupId>com.sun</groupId>-->
+        <!--<artifactId>tools</artifactId>-->
+        <!--<version>1.8</version>-->
+        <!--<scope>system</scope>-->
+        <!--<systemPath>${JAVA_HOME}/lib/tools.jar</systemPath>-->
         <!--</dependency>-->
 
 
