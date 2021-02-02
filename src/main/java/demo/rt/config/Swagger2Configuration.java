@@ -33,7 +33,7 @@ public class Swagger2Configuration {
                 .pathMapping("/")
                 .apiInfo(apiInfo())
                 .useDefaultResponseMessages(false)
-                .groupName("System")
+                .groupName("default")
 //                .produces(Sets.newHashSet("application/octet-stream"))
                 ;
     }

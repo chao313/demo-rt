@@ -16,7 +16,7 @@ import java.util.concurrent.Callable;
 @Slf4j
 public class MonitorTrack {
 
-    public static Collection<Track> tracks = new ArrayList<>();//收集全部的追踪信息
+    public static Collection<Track> rootTracks = new ArrayList<>();//收集全部的追踪信息
     public static Map<String, List<Track>> mapTracks = new LinkedHashMap<>();//收集全部的追踪信息(方法map)
     public static Map<String, Track> mapTrack = new LinkedHashMap<>();//收集UUID到track的信息(方便快速检索)
     public static ThreadLocal<Track> trackThreadLocal = new InheritableThreadLocal<>();
@@ -60,7 +60,7 @@ public class MonitorTrack {
             flag = true;//代表是头节点
             trackThreadLocal.set(track);
             //存储
-            tracks.add(track);
+            rootTracks.add(track);
             String key = track.getClassName() + "#" + track.getMethodName();
             if (mapTracks.containsKey(key)) {
                 mapTracks.get(key).add(track);

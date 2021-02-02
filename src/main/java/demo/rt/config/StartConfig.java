@@ -14,41 +14,41 @@ import java.util.List;
  */
 @Component
 public class StartConfig {
-
-    //注入 多字段匹配
-    @Value(value = "classpath:data/multi_match_fields.txt")
-    private Resource multi_match_fields;
-
-    //注入 多字段匹配(默认选中的)
-    @Value(value = "classpath:data/multi_match_fields_default.txt")
-    private Resource multi_match_fields_default;
-
-    //注入 demo
-    @Value(value = "classpath:data/demo.txt")
-    private Resource demo;
-
-    private List<String> multi_match_fieldsList;
-
-    private List<String> multi_match_fields_defaultList;
-
-    private String demoStr;
-
-    @PostConstruct
-    public void init() throws IOException {
-        multi_match_fieldsList = IOUtils.readLines(multi_match_fields.getInputStream());
-        multi_match_fields_defaultList = IOUtils.readLines(multi_match_fields_default.getInputStream());
-        demoStr = IOUtils.toString(demo.getInputStream(), "UTF-8");
-    }
-
-    public List<String> getMulti_match_fieldsList() {
-        return multi_match_fieldsList;
-    }
-
-    public List<String> getMulti_match_fields_defaultList() {
-        return multi_match_fields_defaultList;
-    }
-
-    public String getDemoStr() {
-        return demoStr;
-    }
+//
+//    //注入 多字段匹配
+//    @Value(value = "classpath:data/multi_match_fields.txt")
+//    private Resource multi_match_fields;
+//
+//    //注入 多字段匹配(默认选中的)
+//    @Value(value = "classpath:data/multi_match_fields_default.txt")
+//    private Resource multi_match_fields_default;
+//
+//    //注入 demo
+//    @Value(value = "classpath:data/demo.txt")
+//    private Resource demo;
+//
+//    private List<String> multi_match_fieldsList;
+//
+//    private List<String> multi_match_fields_defaultList;
+//
+//    private String demoStr;
+//
+//    @PostConstruct
+//    public void init() throws IOException {
+//        multi_match_fieldsList = IOUtils.readLines(multi_match_fields.getInputStream());
+//        multi_match_fields_defaultList = IOUtils.readLines(multi_match_fields_default.getInputStream());
+//        demoStr = IOUtils.toString(demo.getInputStream(), "UTF-8");
+//    }
+//
+//    public List<String> getMulti_match_fieldsList() {
+//        return multi_match_fieldsList;
+//    }
+//
+//    public List<String> getMulti_match_fields_defaultList() {
+//        return multi_match_fields_defaultList;
+//    }
+//
+//    public String getDemoStr() {
+//        return demoStr;
+//    }
 }
