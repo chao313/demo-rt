@@ -17,7 +17,8 @@ import java.util.concurrent.Callable;
 public class MonitorTrack {
 
     public static Collection<Track> tracks = new ArrayList<>();//收集全部的追踪信息
-    public static Map<String, List<Track>> mapTracks = new LinkedHashMap<>();//收集全部的追踪信息
+    public static Map<String, List<Track>> mapTracks = new LinkedHashMap<>();//收集全部的追踪信息(方法map)
+    public static Map<String, Track> mapTrack = new LinkedHashMap<>();//收集UUID到track的信息(方便快速检索)
     public static ThreadLocal<Track> trackThreadLocal = new InheritableThreadLocal<>();
     private static OutputStream trackLog;
 
@@ -54,6 +55,7 @@ public class MonitorTrack {
 
         boolean flag = false;//是否是头
         Track track = Track.build(thisObject, method, args);
+        mapTrack.put(track.getUuid(), track);
         if (null == trackThreadLocal.get()) {
             flag = true;//代表是头节点
             trackThreadLocal.set(track);

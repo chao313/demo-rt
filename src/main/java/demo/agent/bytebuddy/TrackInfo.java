@@ -1,31 +1,52 @@
 package demo.agent.bytebuddy;
 
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
+@Data
+@Slf4j
 public class TrackInfo {
-
-    private String className;//名称对象
-    private String methodName;//方法名称
-    private Integer parameterCount;//入参个数
-    private List<String> parameterTypes;//入参类型
-    private Object[] args;//入参内容
-    private List<String> returnType;//出参类型
-    private Object result;//出参内容
-    private long start;//开始时间
-    private long end;//结束时间
-    private long cost;//结束时间
-
     private TrackInfo fatherTrackInfo;//上层
+    private String uuid;
+    private String classNameInfo;//名称对象
+    private String methodNameInfo;//方法名称
+    private Integer parameterCountInfo;//入参个数
+    private List<Object> parameterTypesInfo;//入参类型
+    private List<Object> argsInfo;//入参内容
+    private Object returnTypeInfo;//出参类型
+    private Object resultInfo;//出参内容
+    private long startInfo;//开始时间
+    private long endInfo;//结束时间
+    private long costInfo;//结束时间
+    private Object sourceObjectInfo;//原始代理对象
+    private Object sourceMethodInfo;//原始方法
+    private Integer childTrackSizeInfo;//子层size 和 childTracks 保持一致
     private List<TrackInfo> childTrackInfos;//子层
-    private Integer childTrackSize;//子层size 和 childTracks 保持一致
 
-    private String sourceObject;//原始代理对象
-    private String sourceMethod;//原始方法
+    private static Collection<String> classFilter = new HashSet<>();
 
+    static {
+        classFilter.add("com.zaxxer.hikari.HikariDataSource");
+        classFilter.add("java.lang.reflect.Method");
+        classFilter.add("org.springframework.beans.factory.support.DefaultListableBeanFactory");
+        classFilter.add("org.springframework.cglib.core.Signature");
+        classFilter.add("org.springframework.data.redis.connection.jedis.JedisConnectionFactory");
+        classFilter.add("org.springframework.data.redis.core.DefaultHashOperations");
+        classFilter.add("org.springframework.data.redis.core.DefaultListOperations");
+        classFilter.add("org.springframework.data.redis.core.DefaultSetOperations");
+        classFilter.add("org.springframework.data.redis.core.DefaultValueOperations");
+        classFilter.add("org.springframework.data.redis.core.DefaultZSetOperations");
+        classFilter.add("org.springframework.data.redis.core.RedisTemplate");
+        classFilter.add("org.springframework.jdbc.core.JdbcTemplate");
+        classFilter.add("org.springframework.jdbc.datasource.DataSourceTransactionManager");
+        classFilter.add("org.springframework.transaction.support.TransactionTemplate");
+        classFilter.add("org.springframework.web.context.support.StandardServletEnvironment");
+        classFilter.add("springfox.documentation.spring.web.plugins.Docket");
+    }
 
     public static TrackInfo build(Track track) {
         TrackInfo trackInfo = new TrackInfo();
@@ -34,104 +55,15 @@ public class TrackInfo {
     }
 
     private static void clone(Track track, TrackInfo trackInfo) {
-        BeanUtils.copyProperties(track, trackInfo);
-        trackInfo.setSourceObject(track.getSourceObject().toString());
-        trackInfo.setSourceMethod(track.getSourceMethod().getName());
+        TrackInfo.copyProperties(track, trackInfo);
         track.getChild().forEach(child -> {
             TrackInfo trackChild = new TrackInfo();
             trackInfo.getChildTrackInfos().add(trackChild);
 //            trackChild.setFatherTrackInfo(trackInfo);
-            clone(child, trackChild);
+            TrackInfo.clone(child, trackChild);
         });
     }
 
-    public String getClassName() {
-        return className;
-    }
-
-    public void setClassName(String className) {
-        this.className = className;
-    }
-
-    public String getMethodName() {
-        return methodName;
-    }
-
-    public void setMethodName(String methodName) {
-        this.methodName = methodName;
-    }
-
-    public Integer getParameterCount() {
-        return parameterCount;
-    }
-
-    public void setParameterCount(Integer parameterCount) {
-        this.parameterCount = parameterCount;
-    }
-
-    public List<String> getParameterTypes() {
-        return parameterTypes;
-    }
-
-    public void setParameterTypes(List<String> parameterTypes) {
-        this.parameterTypes = parameterTypes;
-    }
-
-    public Object[] getArgs() {
-        return args;
-    }
-
-    public void setArgs(Object[] args) {
-        this.args = args;
-    }
-
-    public List<String> getReturnType() {
-        return returnType;
-    }
-
-    public void setReturnType(List<String> returnType) {
-        this.returnType = returnType;
-    }
-
-    public Object getResult() {
-        return result;
-    }
-
-    public void setResult(Object result) {
-        this.result = result;
-    }
-
-    public long getStart() {
-        return start;
-    }
-
-    public void setStart(long start) {
-        this.start = start;
-    }
-
-    public long getEnd() {
-        return end;
-    }
-
-    public void setEnd(long end) {
-        this.end = end;
-    }
-
-    public long getCost() {
-        return cost;
-    }
-
-    public void setCost(long cost) {
-        this.cost = cost;
-    }
-
-    public TrackInfo getFatherTrackInfo() {
-        return fatherTrackInfo;
-    }
-
-    public void setFatherTrackInfo(TrackInfo fatherTrackInfo) {
-        this.fatherTrackInfo = fatherTrackInfo;
-    }
 
     public synchronized List<TrackInfo> getChildTrackInfos() {
         if (null == this.childTrackInfos) {
@@ -140,31 +72,65 @@ public class TrackInfo {
         return this.childTrackInfos;
     }
 
-    public void setChildTrackInfos(List<TrackInfo> childTrackInfos) {
-        this.childTrackInfos = childTrackInfos;
+    /**
+     * 下面两个使用递归处理
+     * private TrackInfo fatherTrackInfo;       //上层
+     * private List<TrackInfo> childTrackInfos; //子层
+     */
+    private static void copyProperties(Track track, TrackInfo trackInfo) {
+        trackInfo.setUuid(track.getUuid());
+        trackInfo.setClassNameInfo(track.getClassName());
+        trackInfo.setMethodNameInfo(track.getMethodName());
+        trackInfo.setParameterCountInfo(track.getParameterCount());
+        trackInfo.setParameterTypesInfo(toList(Arrays.asList(track.getParameterTypes())));
+        trackInfo.setArgsInfo(toList(Arrays.asList(track.getArgs())));
+        trackInfo.setReturnTypeInfo(TrackInfo.change(track.getReturnType()));
+        trackInfo.setResultInfo(TrackInfo.change(track.getResult()));
+        trackInfo.setStartInfo(track.getStart());
+        trackInfo.setEndInfo(track.getEnd());
+        trackInfo.setCostInfo(track.getCost());
+        trackInfo.setChildTrackSizeInfo(track.getChildTrackSize());
+        //获取source对象可能会导致是循环
+        trackInfo.setSourceObjectInfo(track.getSourceObject().toString());
+        trackInfo.setSourceMethodInfo(TrackInfo.change(track.getSourceMethod()));
     }
 
-    public Integer getChildTrackSize() {
-        return childTrackSize;
+    private static List<Object> toList(Collection<Object> objects) {
+        List<Object> result = new ArrayList<>();
+        objects.forEach(o -> {
+            result.add(TrackInfo.change(o));
+        });
+        return result;
     }
 
-    public void setChildTrackSize(Integer childTrackSize) {
-        this.childTrackSize = childTrackSize;
+    public static Object change(Object o) {
+        if (null == o) {
+            return o;
+        }
+        boolean b = canToJson(o);
+        if (b == true) {
+            return o;
+        } else {
+            return o.toString();
+        }
     }
 
-    public String getSourceObject() {
-        return sourceObject;
+    public static boolean canToJson(Object object) {
+        boolean canToJson = true;
+        try {
+            if (classFilter.contains(object.getClass().getName())) {
+                canToJson = false;
+            } else {
+                JsonMapper jsonMapper = new JsonMapper();
+                jsonMapper.writeValueAsString(object);
+            }
+        } catch (Exception e) {
+            log.info("不能转换成json:{}", object.getClass().getName());
+            classFilter.add(object.getClass().getName());
+            canToJson = false;
+        }
+        return canToJson;
     }
 
-    public void setSourceObject(String sourceObject) {
-        this.sourceObject = sourceObject;
-    }
 
-    public String getSourceMethod() {
-        return sourceMethod;
-    }
-
-    public void setSourceMethod(String sourceMethod) {
-        this.sourceMethod = sourceMethod;
-    }
 }

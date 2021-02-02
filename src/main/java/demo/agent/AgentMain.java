@@ -34,46 +34,48 @@ public class AgentMain {
      * @param packageName 需要代理的包名
      */
     private static void buildAgent(Instrumentation inst, String packageName) {
-        AgentBuilder.Transformer transformer = (builder, typeDescription,
-                                                classLoader, javaModule) -> {
-            return builder
-                    .method(ElementMatchers.any())// 拦截任意方法
-                    .intercept(MethodDelegation.to(MonitorTrack.class));// 委托
-        };
-
-        AgentBuilder.Listener listener = new AgentBuilder.Listener() {
-            @Override
-            public void onDiscovery(String s, ClassLoader classLoader, JavaModule javaModule, boolean b) {
-//                log.info("s:{}", s);
-            }
-
-            @Override
-            public void onTransformation(TypeDescription typeDescription, ClassLoader classLoader, JavaModule javaModule, boolean b, DynamicType dynamicType) {
-//                log.info("s:{}");
-            }
-
-            @Override
-            public void onIgnored(TypeDescription typeDescription, ClassLoader classLoader, JavaModule javaModule, boolean b) {
-//                log.info("s:{}");
-            }
-
-            @Override
-            public void onError(String s, ClassLoader classLoader, JavaModule javaModule, boolean b, Throwable throwable) {
-//                log.info("s:{}");
-            }
-
-            @Override
-            public void onComplete(String s, ClassLoader classLoader, JavaModule javaModule, boolean b) {
-//                log.info("s:{}");
-            }
-        };
-
         new AgentBuilder
                 .Default()
                 .type(ElementMatchers.nameStartsWith(packageName)) // 指定需要拦 截的类
-                .transform(transformer)
-                .with(listener)
+                .transform(new AgentBuilder.Transformer() {
+                    @Override
+                    public DynamicType.Builder<?> transform(DynamicType.Builder<?> builder, TypeDescription typeDescription, ClassLoader classLoader, JavaModule module) {
+                        DynamicType.Builder.MethodDefinition.ReceiverTypeDefinition<?> intercept = builder
+                                .method(ElementMatchers.not(ElementMatchers.named("toString"))
+                                        .and(ElementMatchers.not(ElementMatchers.named("hashCode")))
+                                ) // 拦截任意方法
+                                .intercept(MethodDelegation.to(MonitorTrack.class));// 委托
+                        return intercept;
+                    }
+                })
+                .with(new AgentBuilder.Listener() {
+                    @Override
+                    public void onDiscovery(String typeName, ClassLoader classLoader, JavaModule module, boolean loaded) {
+
+                    }
+
+                    @Override
+                    public void onTransformation(TypeDescription typeDescription, ClassLoader classLoader, JavaModule module, boolean loaded, DynamicType dynamicType) {
+
+                    }
+
+                    @Override
+                    public void onIgnored(TypeDescription typeDescription, ClassLoader classLoader, JavaModule module, boolean loaded) {
+
+                    }
+
+                    @Override
+                    public void onError(String typeName, ClassLoader classLoader, JavaModule module, boolean loaded, Throwable throwable) {
+
+                    }
+
+                    @Override
+                    public void onComplete(String typeName, ClassLoader classLoader, JavaModule module, boolean loaded) {
+
+                    }
+                })
                 .installOn(inst);
+
     }
 
 }

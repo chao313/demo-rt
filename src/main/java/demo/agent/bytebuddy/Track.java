@@ -8,10 +8,12 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 @Data
 public class Track {
-
+    private Track fatherTrack;//上层
+    private String uuid;
     private String className;//名称对象
     private String methodName;//方法名称
     private Integer parameterCount;//入参个数
@@ -23,14 +25,10 @@ public class Track {
     private long end;//结束时间
     private long cost;//结束时间
 
-    //        private int
-    private Track fatherTrack;//上层
-    private List<Track> childTracks;//子层
-    private Integer childTrackSize;//子层size 和 childTracks 保持一致
-
     private Object sourceObject;//原始代理对象
     private Method sourceMethod;//原始方法
-
+    private Integer childTrackSize;//子层size 和 childTracks 保持一致
+    private List<Track> childTracks;//子层
 
     @Override
     public String toString() {
@@ -55,6 +53,7 @@ public class Track {
                               Object[] args//参数
     ) {
         Track track = new Track();
+        track.uuid = UUID.randomUUID().toString().replace("-", "");
         track.sourceMethod = method;
         track.sourceObject = thisObject;
         //

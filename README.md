@@ -10,6 +10,12 @@ https://observablehq.com/@d3/collapsible-tree
 ## =后面加上参数
 -javaagent:/Users/chao/IdeaWorkspace/demo-rt.rt/target/demo-rt-0.0.1-SNAPSHOT.jar=demo
 
+<dependency>
+  <groupId>net.bytebuddy</groupId>
+  <artifactId>byte-buddy</artifactId>
+  <version>1.10.19</version>
+</dependency>
+
 ## 如何学习一个类?
 * 找到有价值的类
 * 学习上层接口+类(学到抽象类为止?接口不存在意义?)
