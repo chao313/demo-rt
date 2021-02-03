@@ -141,5 +141,25 @@ public class TrackInfo {
         return canToJson;
     }
 
-
+    @Override
+    public String toString() {
+        return "TrackInfo{" +
+//                "fatherTrackInfo=" + fatherTrackInfo +
+                ", uuid='" + uuid + '\'' +
+                ", classNameInfo='" + classNameInfo + '\'' +
+                ", methodNameInfo='" + methodNameInfo + '\'' +
+                ", parameterCountInfo=" + parameterCountInfo +
+                ", parameterTypesInfo=" + parameterTypesInfo +
+                ", argsInfo=" + argsInfo +
+                ", returnTypeInfo=" + returnTypeInfo +
+                ", resultInfo=" + resultInfo +
+                ", startInfo=" + startInfo +
+                ", endInfo=" + endInfo +
+                ", costInfo=" + costInfo +
+                ", sourceObjectInfo=" + sourceObjectInfo +
+                ", sourceMethodInfo=" + sourceMethodInfo +
+                ", childTrackSizeInfo=" + childTrackSizeInfo +
+//                ", childTrackInfos=" + childTrackInfos +
+                '}';
+    }
 }

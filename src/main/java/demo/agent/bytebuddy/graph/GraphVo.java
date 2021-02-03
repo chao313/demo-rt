@@ -74,4 +74,13 @@ public class GraphVo {
             this.text = text;
         }
     }
+
+    @Override
+    public String toString() {
+        return "GraphVo{" +
+                "rootId='" + rootId + '\'' +
+//                ", nodes=" + nodes +
+//                ", links=" + links +
+                '}';
+    }
 }
