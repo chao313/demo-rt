@@ -5,11 +5,14 @@ import lombok.Data;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
 
 @Data
-public class Track {
-    private Track fatherTrack;//上层
+public class TrackBak {
+    private TrackBak fatherTrack;//上层
     private String uuid;
     private String className;//名称对象
     private String methodName;//方法名称
@@ -25,7 +28,7 @@ public class Track {
     private Object sourceObject;//原始代理对象
     private Method sourceMethod;//原始方法
     private Integer childTrackSize;//子层size 和 childTracks 保持一致
-    private List<Track> childTracks;//子层
+    private List<TrackBak> childTracks;//子层
 
     @Override
     public String toString() {
@@ -45,40 +48,11 @@ public class Track {
                 '}';
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Track track = (Track) o;
-        return start == track.start &&
-                end == track.end &&
-                cost == track.cost &&
-                Objects.equals(uuid, track.uuid) &&
-                Objects.equals(className, track.className) &&
-                Objects.equals(methodName, track.methodName) &&
-                Objects.equals(parameterCount, track.parameterCount) &&
-                Arrays.equals(parameterTypes, track.parameterTypes) &&
-                Arrays.equals(args, track.args) &&
-                Objects.equals(returnType, track.returnType) &&
-                Objects.equals(result, track.result) &&
-                Objects.equals(sourceObject, track.sourceObject) &&
-                Objects.equals(sourceMethod, track.sourceMethod) &&
-                Objects.equals(childTrackSize, track.childTrackSize);
-    }
-
-    @Override
-    public int hashCode() {
-        int result1 = Objects.hash(uuid, className, methodName, parameterCount, returnType, result, start, end, cost, sourceObject, sourceMethod, childTrackSize);
-        result1 = 31 * result1 + Arrays.hashCode(parameterTypes);
-        result1 = 31 * result1 + Arrays.hashCode(args);
-        return result1;
-    }
-
-    public static Track build(Object thisObject,//当前对象
-                              Method method,//拦截方法
-                              Object[] args//参数
+    public static TrackBak build(Object thisObject,//当前对象
+                                 Method method,//拦截方法
+                                 Object[] args//参数
     ) {
-        Track track = new Track();
+        TrackBak track = new TrackBak();
         track.uuid = UUID.randomUUID().toString().replace("-", "");
         track.sourceMethod = method;
         track.sourceObject = thisObject;
@@ -102,7 +76,7 @@ public class Track {
         this.cost = this.end - this.start;
     }
 
-    public synchronized void addChild(Track child) {
+    public synchronized void addChild(TrackBak child) {
         if (null == this.childTracks) {
             this.childTracks = new ArrayList<>();
         }
@@ -113,7 +87,7 @@ public class Track {
         childTrackSize++;
     }
 
-    public synchronized List<Track> getChild() {
+    public synchronized List<TrackBak> getChild() {
         if (null == this.childTracks) {
             this.childTracks = new ArrayList<>();
         }
@@ -124,18 +98,18 @@ public class Track {
         return getTreeStr(this, outputStream);
     }
 
-    public static OutputStream getTreeStr(Track track, OutputStream outputStream) throws IOException {
+    public static OutputStream getTreeStr(TrackBak track, OutputStream outputStream) throws IOException {
         StringBuilder str = new StringBuilder();
         print(outputStream, track, 0);
         return outputStream;
     }
 
-    private static void print(OutputStream outputStream, Track track, int level) throws IOException {
+    private static void print(OutputStream outputStream, TrackBak track, int level) throws IOException {
         for (int i = 0; i < level; i++) {
             outputStream.write("\t".getBytes());
         }
         outputStream.write((track.className + "#" + track.methodName + ":耗时:" + (track.getEnd() - track.getStart()) + "\n").getBytes());
-        for (Track childTrack : track.getChild()) {
+        for (TrackBak childTrack : track.getChild()) {
             int levelNext = level + 1;
             print(outputStream, childTrack, levelNext);
         }

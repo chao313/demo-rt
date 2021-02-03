@@ -3,6 +3,7 @@
  */
 package demo.agent.bytebuddy.graph;
 
+import com.alibaba.fastjson.JSONObject;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -28,6 +29,13 @@ public class GraphVo {
         return this;
     }
 
+    public GraphVo builderNode(String id, String text, Object data) {
+        Node node = new Node(id, text);
+        node.setData(data);
+        this.getNodes().add(node);
+        return this;
+    }
+
     public GraphVo builderLink(String from, String to, String text) {
         Link link = new Link(from, to, text);
         this.getLinks().add(link);
@@ -47,6 +55,7 @@ public class GraphVo {
 
         private String id;//节点id，不能重复，重复会被忽略
         private String text;//text 节点名称
+        private Object data;//data 数据节点名称
     }
 
     /**

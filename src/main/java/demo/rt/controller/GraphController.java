@@ -2,6 +2,7 @@ package demo.rt.controller;
 
 import demo.agent.bytebuddy.MonitorTrack;
 import demo.agent.bytebuddy.Track;
+import demo.agent.bytebuddy.TrackInfo;
 import demo.agent.bytebuddy.graph.GraphVo;
 import demo.rt.config.framework.Response;
 import demo.rt.service.TreeService;
@@ -9,16 +10,14 @@ import demo.rt.service.vo.Node;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 /**
  * 链路追踪
@@ -50,19 +49,37 @@ public class GraphController {
     public Response getGraphTrack() {
         GraphVo graphVo = GraphVo.builder("root");
         graphVo.builderNode("root", "root");
+        Collection<Track> filter = new HashSet<>();
+        //筛选出除去当前class的全部的root
         MonitorTrack.rootTracks.forEach(track -> {
+            if (track.getSourceObject().getClass().equals(this.getClass())) {
+                //移除当前的class（图谱）
+                return;
+            }
+            filter.add(track);
+        });
+        filter.forEach(track -> {
             graphVo.builderLink("root", track.getUuid(), "");
         });
-        buildGraph(MonitorTrack.rootTracks, graphVo, 5, 0);
+        buildGraph(filter, graphVo, 50, 0);
         return Response.Ok(graphVo);
     }
 
+    /**
+     * @param tracks
+     * @param graphVo
+     * @param level   为 -1 时是不限制
+     * @param i
+     */
     private void buildGraph(Collection<Track> tracks, GraphVo graphVo, int level, int i) {
-        if (i >= level) {
-            return;
+        if (level != -1) {
+            if (i >= level) {
+                return;
+            }
         }
         tracks.forEach(track -> {
-            graphVo.builderNode(track.getUuid(), track.getSourceMethod().toString());
+            TrackInfo trackInfo = TrackInfo.buildOnlyRoot(track);
+            graphVo.builderNode(track.getUuid(), track.getMethodName(), trackInfo);
             track.getChild().forEach(childTrack -> {
                 graphVo.builderLink(track.getUuid(), childTrack.getUuid(), "");
             });
@@ -78,10 +95,36 @@ public class GraphController {
         List<Track> tracks = MonitorTrack.mapTracks.get(method);//所有的
         tracks.forEach(track -> {
             graphVo.builderLink("root", track.getUuid(), "");
-            buildGraph(Arrays.asList(track), graphVo, 50, 0);
+            buildGraph(Arrays.asList(track), graphVo, -1, 0);
         });
         return Response.Ok(graphVo);
     }
+
+    @ApiOperation(value = "获取关系图Track(@Controller)")
+    @GetMapping(value = "/getGraphTrackDefaultController")
+    public Response getGraphTrackDefaultController() {
+        GraphVo graphVo = GraphVo.builder("root");
+        graphVo.builderNode("root", "root");
+        Collection<Track> filter = new HashSet<>();
+        //过滤出Controller为的所有方法(从根节点开始)
+        MonitorTrack.rootTracks.forEach(track -> {
+            if (track.getSourceObject().getClass().equals(this.getClass())) {
+                //移除当前的class（图谱）
+                return;
+            }
+            Arrays.stream(track.getSourceObject().getClass().getDeclaredAnnotations()).forEach(annotation -> {
+                if (annotation instanceof RestController || annotation instanceof Controller) {
+                    filter.add(track);
+                }
+            });
+        });
+        filter.forEach(track -> {
+            graphVo.builderLink("root", track.getUuid(), "");
+            buildGraph(Arrays.asList(track), graphVo, -1, 0);
+        });
+        return Response.Ok(graphVo);
+    }
+
 
     @ApiOperation(value = "获取关系图分类树")
     @GetMapping(value = "/getGraphCategoryTree")

@@ -64,6 +64,15 @@ public class TrackInfo {
         });
     }
 
+    /**
+     * 只build根
+     */
+    public static TrackInfo buildOnlyRoot(Track track) {
+        TrackInfo trackInfo = new TrackInfo();
+        TrackInfo.copyProperties(track, trackInfo);
+        return trackInfo;
+    }
+
 
     public synchronized List<TrackInfo> getChildTrackInfos() {
         if (null == this.childTrackInfos) {
