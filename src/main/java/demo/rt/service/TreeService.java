@@ -58,7 +58,7 @@ public class TreeService {
         for (Tb4827 tb4827 : tb4827s) {
             if (tb4827.getF2_4827().equals("人")) {
                 //暂时排除人
-                break;
+                continue;
             }
             List<Tb4828> tb4828s = dao4828.queryByF1(tb4827.getF1_4827());
 

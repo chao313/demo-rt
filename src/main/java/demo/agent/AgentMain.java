@@ -17,16 +17,29 @@ import java.lang.instrument.Instrumentation;
  */
 @Slf4j
 public class AgentMain {
+
+    private static String rootPackage = "";
+
+    public static String getRootPackage() {
+        return rootPackage;
+    }
+
     /**
      * @param args args[0]:packageName
+     * @param args args[1]:rootPackage
      * @param inst
      */
     public static void premain(String args, Instrumentation inst) {
         if (StringUtils.isBlank(args)) {
             throw new RuntimeException("指定参数为空,程序退出");
         }
-        String packageName = args;
-        buildAgent(inst, packageName);
+        String[] split = args.split(",");
+        if (split.length == 2) {
+            rootPackage = args.split(",")[1];//第二个是作为根节点的开启
+        } else {
+            String packageName = args.split(",")[0];
+            buildAgent(inst, packageName);
+        }
     }
 
     /**

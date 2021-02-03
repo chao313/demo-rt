@@ -11,11 +11,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * 链路追踪
@@ -65,6 +68,19 @@ public class GraphController {
             });
             buildGraph(track.getChild(), graphVo, level, i + 1);
         });
+    }
+
+    @ApiOperation(value = "获取关系图Track(ByMethod)")
+    @GetMapping(value = "/getGraphTrackByMethod")
+    public Response getGraphTrackByMethod(@RequestParam(value = "method") String method) {
+        GraphVo graphVo = GraphVo.builder("root");
+        graphVo.builderNode("root", "root");
+        List<Track> tracks = MonitorTrack.mapTracks.get(method);//所有的
+        tracks.forEach(track -> {
+            graphVo.builderLink("root", track.getUuid(), "");
+            buildGraph(Arrays.asList(track), graphVo, 50, 0);
+        });
+        return Response.Ok(graphVo);
     }
 
     @ApiOperation(value = "获取关系图分类树")
