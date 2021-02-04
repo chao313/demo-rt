@@ -2,6 +2,8 @@
 
 [swagger](http://127.0.0.1:9001/demo_rt/swagger-ui.html)
 
+http://localhost:8080/#/GraphTrackController
+
 d3:
 https://observablehq.com/@d3/gallery
 
@@ -11,6 +13,9 @@ relation-graph:
 http://www.relation-graph.com/#/docs/graph - 关键示意
 http://www.relation-graph.com/#/docs/start
 https://github.com/seeksdream/relation-graph
+
+SpringBoot JMX
+https://blog.csdn.net/weixin_34024034/article/details/93176218?utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-2.control&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-2.control
 
 
 ## =后面加上参数

@@ -33,8 +33,8 @@ public class Track {
                 "className='" + className + '\'' +
                 ", methodName='" + methodName + '\'' +
                 ", parameterCount=" + parameterCount +
-                ", parameterTypes=" + Arrays.toString(parameterTypes) +
-                ", args=" + Arrays.toString(args) +
+//                ", parameterTypes=" + Arrays.toString(parameterTypes) +
+//                ", args=" + Arrays.toString(args) +
                 ", returnType=" + returnType +
                 ", result=" + result +
                 ", start=" + start +

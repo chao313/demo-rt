@@ -77,21 +77,21 @@ public class MonitorTrack {
         Object result = null;
         try {
             result = callable.call();
+            track.exit(result, System.currentTimeMillis());
         } catch (Exception e) {
-            log.error("e:{}", e.toString(), e);
-        }
-        track.exit(result, System.currentTimeMillis());
-
-        if (flag == true) {
-            trackLog = trackThreadLocal.get().getTreeStr(trackLog);
-            trackLog.flush();
-            trackThreadLocal.remove();
-        } else {
-            //节点向前移动一位
-            trackThreadLocal.set(track.getFatherTrack());
+            log.error("MonitorTrack:e:{}", e.toString(), e);
+        } finally {
+            //这段必须要执行！ 放在finally里面
+            if (flag == true) {
+                trackLog = trackThreadLocal.get().getTreeStr(trackLog);
+                trackLog.flush();
+                trackThreadLocal.remove();
+            } else {
+                //节点向前移动一位
+                trackThreadLocal.set(track.getFatherTrack());
+            }
         }
         return result;
     }
-
 
 }
