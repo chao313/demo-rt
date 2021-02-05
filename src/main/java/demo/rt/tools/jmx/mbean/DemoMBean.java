@@ -1,4 +1,4 @@
-package demo.rt.mbean;
+package demo.rt.tools.jmx.mbean;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
  * https://blog.csdn.net/inrgihc/article/details/104775481
  */
 @Component
-@ManagedResource(objectName = "demo.rt.mbean.jmx:type=DemoMBean", description = "DemoMBean")
+@ManagedResource(objectName = "demo.rt.tools.jmx.mbean.jmx:type=DemoMBean", description = "DemoMBean")
 public class DemoMBean {
 
     private long id;

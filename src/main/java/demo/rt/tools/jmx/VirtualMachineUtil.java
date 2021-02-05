@@ -1,4 +1,4 @@
-package demo.rt.tools;
+package demo.rt.tools.jmx;
 
 import com.sun.tools.attach.AgentInitializationException;
 import com.sun.tools.attach.AgentLoadException;
@@ -22,7 +22,7 @@ import java.lang.management.RuntimeMXBean;
 import java.util.*;
 
 @Slf4j
-public class VirtualMachineService {
+public class VirtualMachineUtil {
 
 
     /**
@@ -80,9 +80,13 @@ public class VirtualMachineService {
         System.out.println("url:{}"+url);
         JMXServiceURL jmxServiceURL = new JMXServiceURL(url);
         JMXConnector connector = JMXConnectorFactory.connect(jmxServiceURL);
-        RuntimeMXBean rmxb = ManagementFactory.newPlatformMXBeanProxy(connector
+        RuntimeMXBean runtimeMXBean = ManagementFactory.newPlatformMXBeanProxy(connector
                 .getMBeanServerConnection(), "java.lang:type=Runtime", RuntimeMXBean.class);
-        log.info("");
+        log.info("runtimeMXBean：{}",runtimeMXBean.getName());
+        log.info("runtimeMXBean：{}",runtimeMXBean.getSystemProperties());
+        log.info("runtimeMXBean：{}",runtimeMXBean.getName());
+        log.info("runtimeMXBean：{}",runtimeMXBean.getName());
+        log.info("runtimeMXBean：{}",runtimeMXBean.getName());
     }
 
 

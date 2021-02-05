@@ -1,4 +1,4 @@
-package demo.rt.tools;
+package demo.rt.tools.jmx;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
