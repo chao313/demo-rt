@@ -7,14 +7,15 @@ import demo.agent.bytebuddy.graph.GraphVo;
 import demo.rt.config.framework.Response;
 import demo.rt.service.TreeService;
 import demo.rt.service.vo.Node;
+import demo.rt.util.TreePluginUtils;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.*;
@@ -153,5 +154,47 @@ public class GraphController {
             buildGraph(node.initChilds(), graphVo);
         });
     }
+
+
+    /**
+     * 工业增加值\t规模以上
+     * \t      \t全社会
+     */
+    @ApiOperation(value = "特定格式中生成图")
+    @PostMapping(value = "/getGraphFromData")
+    public Response getGraphFromData(@RequestBody String source) throws IOException {
+        List<String> listSource = Arrays.asList(source.split("\n"));
+        Node node = TreePluginUtils.generateNodeFromExcelFormat(listSource);
+        Collection<Node> result = clean(node);
+
+
+        GraphVo graphVo = GraphVo.builder("root");
+        graphVo.builderNode("root", "root");
+        result.forEach(nodeTmp -> {
+            graphVo.builderLink("root", nodeTmp.getUuid(), "");
+        });
+        buildGraph(result, graphVo);
+        return Response.Ok(graphVo);
+    }
+
+    /**
+     * 移除无用根节点
+     *
+     * @return
+     */
+    private static Collection<Node> clean(Node root) {
+        Collection<Node> result = Arrays.asList(root);
+        if (StringUtils.isBlank(root.getData())) {
+            Set<Node> nodes = root.initChilds();
+            if (nodes.size() == 1) {
+                root = (Node) nodes.toArray()[0];
+                result = Arrays.asList(root);
+            } else {
+                result = root.initChilds();
+            }
+        }
+        return result;
+    }
+
 
 }

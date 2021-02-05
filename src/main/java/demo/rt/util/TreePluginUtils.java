@@ -934,38 +934,26 @@ public class TreePluginUtils {
         return list4837;
     }
 
-//
-//    private void deal(Collection<Node> nodes) {
-//        for (Node node : nodes) {
-//            Map<String, List<Node>> map = new HashMap<>();
-//            //收集data的节点
-//            node.getChilds().forEach(child -> {
-//                if (map.containsKey(child.getData())) {
-//                    map.get(child.getData()).add(child);
-//                } else {
-//                    List<Node> tmp = new ArrayList<>();
-//                    tmp.add(child);
-//                    map.put(child.getData(), tmp);
-//                }
-//            });
-//            List<Node> nodesToRemove = new ArrayList<>();
-//            //筛选出需要移除的节点
-//            map.forEach((key, nodeTmps) -> {
-//                if (nodeTmps.size() >= 2) {
-//
-//                    int size = 0;
-//                    for (Node nodeTmp : nodeTmps) {
-//                        if (nodeTmp.toString().length() > size) {
-//                            size = nodeTmp.toString().length();
-//                        } else {
-//                            nodesToRemove.add(nodeTmp);
-//                        }
-//                    }
-//                }
-//            });
-//            node.getChilds().removeAll(nodesToRemove);
-//            deal(node.getChilds());
-//        }
-//    }
+    /**
+     * 从excel中生成树(特定格式)
+     */
+    public static Node generateNodeFromExcelFormat(List<String> listSource) {
+        List<List<String>> listResult = new ArrayList<>();
+        listSource.forEach(line -> {
+            String[] split = line.split("\t");
+            listResult.add(new ArrayList<>(Arrays.asList(split)));
+        });
+        for (int i = 0; i < listResult.size(); i++) {
+            List<String> list = listResult.get(i);
+            for (int i1 = 0; i1 < list.size(); i1++) {
+                String word = list.get(i1);
+                if (StringUtils.isBlank(word)) {
+                    list.set(i1, listResult.get(i - 1).get(i1));
+                }
+            }
+        }
+        Node node = buildEntity(listResult);
+        return node;
+    }
 
 }
