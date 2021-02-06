@@ -7,6 +7,16 @@ import java.lang.management.*;
 import java.util.List;
 
 public class SelfMXBean implements MXBeanInterface {
+
+    private static SelfMXBean selfMXBean = new SelfMXBean();
+
+    public static MXBeanInterface geInstance() {
+        return selfMXBean;
+    }
+
+    private SelfMXBean() {
+    }
+
     @Override
     public ClassLoadingMXBean getClassLoadingMXBean() {
         return ManagementFactory.getClassLoadingMXBean();

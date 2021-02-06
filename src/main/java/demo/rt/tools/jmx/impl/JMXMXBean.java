@@ -1,6 +1,10 @@
 package demo.rt.tools.jmx.impl;
 
+import com.sun.tools.attach.AgentInitializationException;
+import com.sun.tools.attach.AgentLoadException;
+import com.sun.tools.attach.AttachNotSupportedException;
 import demo.rt.tools.jmx.MXBeanInterface;
+import demo.rt.tools.jmx.VirtualMachineUtil;
 
 import javax.management.MBeanServer;
 import javax.management.remote.JMXConnector;
@@ -8,27 +12,55 @@ import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
 import java.io.IOException;
 import java.lang.management.*;
-import java.lang.reflect.Array;
-import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * 使用单例模式:
+ * 不可创建没有维护的实例
+ */
 public class JMXMXBean implements MXBeanInterface {
+
+    private static Map<String, JMXMXBean> mapUrl = new ConcurrentHashMap<>();//缓存url到JMXMXBean
+    private static Map<Integer, JMXMXBean> mapPid = new ConcurrentHashMap<>();//缓存pid到JMXMXBean
+
+
+    public static JMXMXBean getInstance(String url) throws IOException {
+        if (mapUrl.containsKey(url)) {
+            return mapUrl.get(url);
+        } else {
+            synchronized (JMXMXBean.class) {
+                if (!mapUrl.containsKey(url)) {
+                    JMXMXBean jmxmxBean = new JMXMXBean(url);
+                    mapUrl.put(url, jmxmxBean);
+                }
+            }
+        }
+        return mapUrl.get(url);
+    }
+
+    public static JMXMXBean getInstance(Integer pid) throws IOException, AttachNotSupportedException, AgentLoadException, AgentInitializationException {
+        if (mapPid.containsKey(pid)) {
+            return mapPid.get(pid);
+        } else {
+            synchronized (JMXMXBean.class) {
+                if (!mapPid.containsKey(pid)) {
+                    String url = VirtualMachineUtil.openJMXAndGetUrl(pid);
+                    JMXMXBean jmxmxBean = new JMXMXBean(url);
+                    mapPid.put(pid, jmxmxBean);
+                }
+            }
+        }
+        return mapPid.get(pid);
+    }
 
     private JMXConnector connector = null;
 
-    public JMXMXBean(String url) throws IOException {
+    private JMXMXBean(String url) throws IOException {
         JMXServiceURL jmxServiceURL = new JMXServiceURL(url);
         JMXConnector connector = JMXConnectorFactory.connect(jmxServiceURL);
-        this.connector = connector;
-    }
-
-    public JMXMXBean(JMXServiceURL jmxServiceURL) throws IOException {
-        JMXConnector connector = JMXConnectorFactory.connect(jmxServiceURL);
-        this.connector = connector;
-    }
-
-    public JMXMXBean(JMXConnector connector) throws IOException {
         this.connector = connector;
     }
 
