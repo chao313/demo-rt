@@ -1,6 +1,8 @@
 package demo.rt.tools.jmx.impl;
 
+import com.sun.management.HotSpotDiagnosticMXBean;
 import demo.rt.tools.jmx.MXBeanInterface;
+import sun.management.ManagementFactoryHelper;
 
 import javax.management.MBeanServer;
 import java.lang.management.*;
@@ -64,5 +66,10 @@ public class SelfMXBean implements MXBeanInterface {
     @Override
     public MBeanServer getPlatformMBeanServer() {
         return ManagementFactory.getPlatformMBeanServer();
+    }
+
+    @Override
+    public HotSpotDiagnosticMXBean getDiagnosticMXBean() {
+        return ManagementFactoryHelper.getDiagnosticMXBean();
     }
 }

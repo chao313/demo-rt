@@ -1,10 +1,12 @@
 package demo.rt.tools.jmx.impl;
 
+import com.sun.management.HotSpotDiagnosticMXBean;
 import com.sun.tools.attach.AgentInitializationException;
 import com.sun.tools.attach.AgentLoadException;
 import com.sun.tools.attach.AttachNotSupportedException;
 import demo.rt.tools.jmx.MXBeanInterface;
 import demo.rt.tools.jmx.VirtualMachineUtil;
+import sun.management.HotSpotDiagnostic;
 
 import javax.management.MBeanServer;
 import javax.management.remote.JMXConnector;
@@ -120,6 +122,7 @@ public class JMXMXBean implements MXBeanInterface {
         return mxBean;
     }
 
+
     @Override
     public List<MemoryPoolMXBean> getMemoryPoolMXBeans() {
         return ManagementFactory.getMemoryPoolMXBeans();
@@ -133,6 +136,14 @@ public class JMXMXBean implements MXBeanInterface {
     @Override
     public MBeanServer getPlatformMBeanServer() {
         return ManagementFactory.getPlatformMBeanServer();
+    }
+
+    @Override
+    public HotSpotDiagnosticMXBean getDiagnosticMXBean() throws IOException {
+        String mxBeanName = "com.sun.management:type=HotSpotDiagnostic";
+        HotSpotDiagnosticMXBean mxBean = ManagementFactory.newPlatformMXBeanProxy(connector
+                .getMBeanServerConnection(), mxBeanName, HotSpotDiagnosticMXBean.class);
+        return mxBean;
     }
 
 

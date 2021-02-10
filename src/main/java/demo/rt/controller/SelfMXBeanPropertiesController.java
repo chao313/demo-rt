@@ -3,21 +3,18 @@ package demo.rt.controller;
 import com.sun.jmx.interceptor.DefaultMBeanServerInterceptor;
 import com.sun.jmx.mbeanserver.NamedObject;
 import com.sun.jmx.mbeanserver.Repository;
-import com.sun.management.HotSpotDiagnosticMXBean;
-import com.sun.tools.attach.AgentInitializationException;
-import com.sun.tools.attach.AgentLoadException;
-import com.sun.tools.attach.AttachNotSupportedException;
-import com.sun.tools.hat.internal.parser.HprofReader;
 import demo.rt.config.framework.Response;
 import demo.rt.tools.jmx.MXBeanInterface;
+import demo.rt.tools.jmx.properties.MemoryManagerMXBeanVo;
+import demo.rt.tools.jmx.properties.MemoryPoolMXBeanVo;
+import demo.rt.tools.jmx.properties.ThreadMXBeanVo;
 import demo.rt.util.ReflectUtil;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import demo.rt.tools.jmx.properties.GarbageCollectorMXBeanVo;
 
 import javax.management.MBeanServer;
 import java.io.IOException;
@@ -31,8 +28,8 @@ import java.util.Map;
  */
 @Slf4j
 @RestController
-@RequestMapping(value = "/SelfMXBeanController")
-public class SelfMXBeanController {
+@RequestMapping(value = "/SelfMXBeanPropertiesController")
+public class SelfMXBeanPropertiesController {
 
     MXBeanInterface mxBeanInterface = MXBeanInterface.getSelfMXBean();
 
@@ -40,64 +37,66 @@ public class SelfMXBeanController {
     @GetMapping(value = "/ClassLoadingMXBean")
     public Response ClassLoadingMXBean() throws IOException {
         ClassLoadingMXBean classLoadingMXBean = mxBeanInterface.getClassLoadingMXBean();
-        return Response.Ok(classLoadingMXBean);
+        return Response.Ok(MXBeanInterface.build(classLoadingMXBean));
     }
 
     @ApiOperation(value = "CompilationMXBean")
     @GetMapping(value = "/CompilationMXBean")
     public Response CompilationMXBean() throws IOException {
         CompilationMXBean compilationMXBean = mxBeanInterface.getCompilationMXBean();
-        return Response.Ok(compilationMXBean);
+        return Response.Ok(MXBeanInterface.build(compilationMXBean));
     }
 
-    @ApiOperation(value = "MemoryMXBean")
-    @GetMapping(value = "/MemoryMXBean")
-    public Response MemoryMXBean() throws IOException {
-        MemoryMXBean memoryMXBean = mxBeanInterface.getMemoryMXBean();
-        return Response.Ok(memoryMXBean);
-    }
 
     @ApiOperation(value = "RuntimeMXBean")
     @GetMapping(value = "/RuntimeMXBean")
     public Response RuntimeMXBean() throws IOException {
         RuntimeMXBean runtimeMXBean = mxBeanInterface.getRuntimeMXBean();
-        return Response.Ok(runtimeMXBean);
+        return Response.Ok(MXBeanInterface.build(runtimeMXBean));
     }
 
-    @ApiOperation(value = "ThreadMXBean")
+    @ApiOperation(value = "ThreadMXBean(还缺少很多的方法:e.g. 获取线程具体信息)")
     @GetMapping(value = "/ThreadMXBean")
     public Response ThreadMXBean() throws IOException {
         ThreadMXBean threadMXBean = mxBeanInterface.getThreadMXBean();
-        return Response.Ok(threadMXBean);
+        ThreadMXBeanVo threadMXBeanVo = MXBeanInterface.build(threadMXBean);
+        return Response.Ok(threadMXBeanVo);
     }
 
     @ApiOperation(value = "OperatingSystemMXBean")
     @GetMapping(value = "/OperatingSystemMXBean")
     public Response OperatingSystemMXBean() throws IOException {
         OperatingSystemMXBean operatingSystemMXBean = mxBeanInterface.getOperatingSystemMXBean();
-        return Response.Ok(operatingSystemMXBean);
+        return Response.Ok(MXBeanInterface.build(operatingSystemMXBean));
     }
 
 
     @ApiOperation(value = "GarbageCollectorMXBean")
     @GetMapping(value = "/GarbageCollectorMXBean")
-    public Response GarbageCollectorMXBean() throws IOException {
+    public Response GarbageCollectorMXBean() throws IOException, NoSuchFieldException, IllegalAccessException {
         List<GarbageCollectorMXBean> garbageCollectorMXBeans = mxBeanInterface.getGarbageCollectorMXBeans();
-        return Response.Ok(garbageCollectorMXBeans);
+        return Response.Ok(MXBeanInterface.build(garbageCollectorMXBeans, new GarbageCollectorMXBeanVo()));
+    }
+
+    @ApiOperation(value = "MemoryMXBean")
+    @GetMapping(value = "/MemoryMXBean")
+    public Response MemoryMXBean() throws IOException {
+        MemoryMXBean memoryMXBean = mxBeanInterface.getMemoryMXBean();
+        return Response.Ok(MXBeanInterface.build(memoryMXBean));
     }
 
     @ApiOperation(value = "MemoryPoolMXBean")
     @GetMapping(value = "/MemoryPoolMXBean")
     public Response MemoryPoolMXBean() {
         List<MemoryPoolMXBean> memoryPoolMXBeans = mxBeanInterface.getMemoryPoolMXBeans();
-        return Response.Ok(memoryPoolMXBeans);
+        return Response.Ok(MXBeanInterface.build(memoryPoolMXBeans, new MemoryPoolMXBeanVo()));
     }
 
     @ApiOperation(value = "MemoryManagerMXBean")
     @GetMapping(value = "/MemoryManagerMXBean")
     public Response MemoryManagerMXBean() {
         List<MemoryManagerMXBean> memoryManagerMXBeans = mxBeanInterface.getMemoryManagerMXBeans();
-        return Response.Ok(memoryManagerMXBeans);
+        return Response.Ok(MXBeanInterface.build(memoryManagerMXBeans, new MemoryManagerMXBeanVo()));
     }
 
     /**
@@ -122,23 +121,6 @@ public class SelfMXBeanController {
             result.put(key, tmp);
         });
         return Response.Ok(result);
-    }
-
-    @ApiOperation(value = "HotSpotDiagnosticMXBean")
-    @GetMapping(value = "/HotSpotDiagnosticMXBean")
-    public Response HotSpotDiagnosticMXBean() throws AgentInitializationException, AgentLoadException, AttachNotSupportedException, IOException {
-        HotSpotDiagnosticMXBean diagnosticMXBean = MXBeanInterface.getSelfMXBean().getDiagnosticMXBean();
-        return Response.Ok(diagnosticMXBean);
-    }
-
-    @ApiOperation(value = "HotSpotDiagnosticMXBean_HeapDump(堆转储) 文件后缀一般默认为 hprof")
-    @GetMapping(value = "/HotSpotDiagnosticMXBean_HeapDump")
-    public Response HotSpotDiagnosticMXBean_HeapDump(@ApiParam(value = "转储的文件地址") @RequestParam(value = "outputFile") String outputFile,
-                                                     @ApiParam(value = "是否只转储存活的OBJ") @RequestParam(value = "live") boolean live)
-            throws IOException {
-        HotSpotDiagnosticMXBean diagnosticMXBean = MXBeanInterface.getSelfMXBean().getDiagnosticMXBean();
-        diagnosticMXBean.dumpHeap(outputFile, live);
-        return Response.Ok(true);
     }
 
     /**

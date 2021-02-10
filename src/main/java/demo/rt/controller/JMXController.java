@@ -1,13 +1,23 @@
 package demo.rt.controller;
 
+import com.sun.tools.hat.internal.model.Snapshot;
+import com.sun.tools.hat.internal.parser.HprofReader;
+import com.sun.tools.hat.internal.parser.PositionDataInputStream;
+import com.sun.tools.hat.internal.parser.ReadBuffer;
 import demo.rt.config.framework.Response;
 import demo.rt.tools.jmx.VirtualMachineUtil;
+import demo.rt.tools.jmx.properties.hprof.SnapshotVo;
+import demo.rt.util.ReflectUtil;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 
@@ -32,6 +42,16 @@ public class JMXController {
     public Response openJMXAndGetUrl(Integer process) throws Exception {
         String url = VirtualMachineUtil.openJMXAndGetUrl(process);
         return Response.Ok(url);
+    }
+
+    @ApiOperation(value = "解析 hprof")
+    @GetMapping(value = "/parse_HeapDump")
+    public Response parse_HeapDump(@ApiParam(value = "转储的文件地址") @RequestParam(value = "outputFile") String outputFile)
+            throws IOException, NoSuchFieldException, IllegalAccessException {
+        Snapshot snapshot = HprofReader.readFile(outputFile, true, 100);
+        snapshot.resolve(true);
+        SnapshotVo snapshotVo = SnapshotVo.builder(snapshot);
+        return Response.Ok(true);
     }
 
 

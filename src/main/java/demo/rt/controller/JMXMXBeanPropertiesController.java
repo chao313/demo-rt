@@ -3,7 +3,6 @@ package demo.rt.controller;
 import com.sun.jmx.interceptor.DefaultMBeanServerInterceptor;
 import com.sun.jmx.mbeanserver.NamedObject;
 import com.sun.jmx.mbeanserver.Repository;
-import com.sun.management.HotSpotDiagnosticMXBean;
 import com.sun.tools.attach.AgentInitializationException;
 import com.sun.tools.attach.AgentLoadException;
 import com.sun.tools.attach.AttachNotSupportedException;
@@ -28,8 +27,8 @@ import java.util.Map;
  */
 @Slf4j
 @RestController
-@RequestMapping(value = "/LocalMXBeanController")
-public class JMXMXBeanController {
+@RequestMapping(value = "/JMXMXBeanPropertiesController")
+public class JMXMXBeanPropertiesController {
 
 
     @ApiOperation(value = "ClassLoadingMXBean")
@@ -119,22 +118,6 @@ public class JMXMXBeanController {
         });
         return Response.Ok(result);
     }
-
-
-    @ApiOperation(value = "HotSpotDiagnosticMXBean")
-    @GetMapping(value = "/HotSpotDiagnosticMXBean")
-    public Response HotSpotDiagnosticMXBean(Integer pid) throws AgentInitializationException, AgentLoadException, AttachNotSupportedException, IOException {
-        HotSpotDiagnosticMXBean diagnosticMXBean = MXBeanInterface.getJMXMXBean(pid).getDiagnosticMXBean();
-        return Response.Ok(diagnosticMXBean);
-    }
-
-    @ApiOperation(value = "HotSpotDiagnosticMXBean_HeapDump(堆转储)")
-    @GetMapping(value = "/HotSpotDiagnosticMXBean_HeapDump")
-    public Response HotSpotDiagnosticMXBean_HeapDump(Integer pid) throws AgentInitializationException, AgentLoadException, AttachNotSupportedException, IOException {
-        HotSpotDiagnosticMXBean diagnosticMXBean = MXBeanInterface.getJMXMXBean(pid).getDiagnosticMXBean();
-        return Response.Ok(diagnosticMXBean);
-    }
-
 
     /**
      * 获取全部的域 -> MBean

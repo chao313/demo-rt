@@ -45,4 +45,13 @@ public class DemoMBean {
         }
     }
 
+    /**
+     * 这里编写暴露方法(JVM直接退出)
+     */
+    @ManagedOperation(description = "JVM退出")
+    public boolean exist() {
+        System.exit(0);
+        return true;
+    }
+
 }
